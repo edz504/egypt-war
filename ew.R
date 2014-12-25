@@ -21,13 +21,17 @@ while (TRUE) {
         break
     }
 
+    # testing
+    if (t > 15) {
+        break
+    }
     # accumulate pot
     pot <- c()
-
     non.face.run <- 0 # how many non-face cards have been played
     # (if face-chain is on)
     latest.face <- 0 # last placed face card
     while (TRUE) {
+
         if (a.turn) {
             this.card <- a[1]
             a <- a[-1]
@@ -44,9 +48,11 @@ while (TRUE) {
             if (runif(1) > a.react) {
                 # b wins 
                 b <- c(b, pot)
+                a.turn <- FALSE # upon collecting, it's winner's turn
             } else {
                 # a wins
                 a <- c(a, pot)
+                a.turn <- TRUE
             } 
             latest.face <- 0
             non.face.run <- 0
@@ -59,9 +65,11 @@ while (TRUE) {
             if (runif(1) > a.react) {
                 # b wins 
                 b <- c(b, pot)
+                a.turn <- FALSE
             } else {
                 # a wins
                 a <- c(a, pot)
+                a.turn <- TRUE
             } 
             latest.face <- 0
             non.face.run <- 0
@@ -80,18 +88,22 @@ while (TRUE) {
                         b <- c(b, pot)
                         latest.face <- 0
                         non.face.run <- 0
+                        b.turn <- TRUE
                         break
                     } else {
                         a <- c(a, pot)
                         latest.face <- 0
-                        non.face.run <- 0 
+                        non.face.run <- 0
+                        a.turn <- TRUE
                         break
                     }
                 } else { # if it's not, we've added to the run so
                 # just move to the next card without switching turns
                     next
                 }
-            } else { # if you play a face card
+            } else {
+                # if you play a face card, restart the chain onto
+                # other person
                 latest.face <- this.card 
                 non.face.run <- 0
                 a.turn <- !a.turn
@@ -99,16 +111,14 @@ while (TRUE) {
             }
         }
 
-        # new face-card starting situation
+        # new face-card chain starting situation
         if (this.card > 10) {
             latest.face <- this.card 
         }
 
-        # if not face or slap, continue
+        # if not face, slap, continue
         a.turn <- !a.turn
     }
-
-
 
     t <- t + 1
 }
